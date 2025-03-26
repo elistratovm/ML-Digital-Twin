@@ -18,11 +18,11 @@ The Multi folder contains all the work related to the use of recurrent neural ne
 
 Due to the large file size and GitHub limitations, some files were uploaded to drive:
 
-1. ### Dataset
+### 1. Dataset
 
 Dataset Link: https://drive.google.com/drive/folders/1KWtmV1qqF36b5aH3KAMECNyPtTqHNrBv?usp=sharing
 
-2. ### Multi-Label Task Precomp
+### 2. Multi-Label Task Precomp
 
 Link: https://drive.google.com/drive/folders/140vtzV2U9MAjyOtj6aDX7pxNHxysCR4Q?usp=sharing
 
