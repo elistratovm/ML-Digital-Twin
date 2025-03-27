@@ -109,9 +109,8 @@ This model follows a model-based approach, relying on general protection logics 
 
 The demonstration .ipynb file provides:
 
-A guide on using RMSHisteresisEstimator
-
-Performance metrics on the test dataset
+• A guide on using RMSHisteresisEstimator
+• Performance metrics on the test dataset
 
 ### Binary Classification with XGBoost
 
