@@ -33,31 +33,36 @@ Link: https://drive.google.com/drive/folders/140vtzV2U9MAjyOtj6aDX7pxNHxysCR4Q?u
 ### Overview
 This repository provides utilities and models for deploying a machine learning model based on Wavelet Embedding. It includes dataset preprocessing, embedding computation, and model training.
 
-### Utility Classes (utils.py)
-The utils.py file contains essential utility classes:
+### Utility Classes
 
-WindowSamplerTorch() – A vectorized class for extracting windows with a given stride and start index.
+The ```utils.py``` file contains essential utility classes:
 
-DatasetWindowed() – A subclass of torch.utils.data.Dataset, which returns a sequence of windows for each unit in the dataset.
+```WindowSamplerTorch()``` – A vectorized class for extracting windows with a given stride and start index.
 
-PrecomputedWaveletEmbeddingDataset() – A dataset class that returns precomputed wavelet embeddings instead of raw windows.
+```DatasetWindowed()``` – A subclass of torch.utils.data.Dataset, which returns a sequence of windows for each unit in the dataset.
 
-TempRWE_Encoder() – A class that computes Temporal Relative Wavelet Energy (RWE) Embeddings for each window in the sequence of a dataset unit.
+```PrecomputedWaveletEmbeddingDataset()``` – A dataset class that returns precomputed wavelet embeddings instead of raw windows.
 
-Preparing Data for Wavelet Embedding Model
+```TempRWE_Encoder()``` – A class that computes Temporal Relative Wavelet Energy (RWE) Embeddings for each window in the sequence of a dataset unit.
+
+### Preparing Data for Wavelet Embedding Model
+
 To deploy the model with wavelet embeddings, the data must be structured as:
 
-
 [data]:  [num_units, seq_len]
+
 [labels]: [num_units, seq_len]
+
 Step 1: Initialize the Encoder
-Import TempRWE_Encoder from utils.py and initialize it:
+
+Import ```TempRWE_Encoder``` from ```utils.py``` and initialize it:
 ```
 from utils import TempRWE_Encoder
 
 encoder = TempRWE_Encoder(maxcurrent=500, wavename="rbio1.3", maxlevel=6, verbosity=0)
 ```
 Step 2: Create a Dataset with Precomputed Embeddings
+
 Import PrecomputedWaveletEmbeddingDataset and create a dataset object:
 
 ```
@@ -70,7 +75,8 @@ Note: Precomputing embeddings takes some time.
 ```
 
 Step 3: Create a DataLoader
-Use torch.utils.data.DataLoader to create a data loader:
+
+Use ```torch.utils.data.DataLoader``` to create a data loader:
 
 ```
 from torch.utils.data import DataLoader
@@ -78,6 +84,7 @@ from torch.utils.data import DataLoader
 loader_train = DataLoader(train_embs, batch_size=32, shuffle=False)
 ```
 ### Model Inference
+
 The models are available in corresponding .ipynb files.
 
 Load a batch from the DataLoader.
@@ -89,12 +96,15 @@ Convert logits to probabilities using ```torch.sigmoid()```:
 import torch
 
 logits = model(batch)
+
 probabilities = torch.sigmoid(logits)
 ```
-Baseline Model: RMS Hysteresis Estimator
-To work with the baseline model, import RMSHisteresisEstimator from utils.py:
+### Baseline Model: RMS Hysteresis Estimator
 
-from utils import RMSHisteresisEstimator
+To work with the baseline model, import ```RMSHisteresisEstimator``` from ```utils.py```:
+
+```from utils import RMSHisteresisEstimator```
+
 This model follows a model-based approach, relying on general protection logics to create a digital twin.
 
 The demonstration .ipynb file provides:
@@ -104,6 +114,7 @@ A guide on using RMSHisteresisEstimator
 Performance metrics on the test dataset
 
 ### Binary Classification with XGBoost
+
 In the binary/ directory, you will find a .ipynb notebook where we trained an XGBoost Classifier using Temporal RWE Embeddings computed over the full sequence length.
 
 ### Available Resources:
