@@ -506,3 +506,65 @@ def get_model_preds_probas_targets(model, loader, proba_threshold = 0.5, device=
     targets = torch.cat(targets, dim=0)
 
     return multipreds, multiprobas, targets
+
+class RMSHisteresisEstimator:
+    '''
+    General model-based Digital Twin of Overcurrent Protection. It has histeresis-like behaviour.\n
+    Base formula:\n
+        Activation: RMS(I(t)) >= I_max `Stays active until deactivation`\n 
+        Deactivation: RMS(I(t)) >= I_back, I_back <= I_max\n
+    '''
+    def __init__(self, wsize = 80) -> None:
+        
+        self.wsize = wsize
+        pass
+    
+    @staticmethod
+    def root_mean_squared(times, signal, signal_period = 20e-3):
+
+        return np.sqrt(1/(signal_period) * np.trapezoid(y = signal**2, x = times))
+
+    @staticmethod
+    def rolling_rms(data, wsize = 80, time_array = None, signal_period = 20e-3, padding = False):
+        '''
+        The method calculates root-mean-squared values by rolling the windows over the signal.
+        The windowization ignores first ```(wsize - 1)``` elements in ```data```, so the result is shorter than the input.\n
+        If ```padding = True```, the first ```(wsize - 1)``` elements will be padded by zeros (no data to calculate values)
+        '''
+        values = []
+
+        if time_array is None:
+            time_array = np.arange(0, len(data)) * 250e-6
+        else: pass
+        
+        for j in range(wsize-1, data.shape[0]):
+    
+            window = data[j - wsize + 1:j+1]
+            window_time = time_array[j - wsize + 1:j+1]
+
+            values.append(RMSHisteresisEstimator.root_mean_squared(times = window_time, signal=window, signal_period=signal_period))
+            # values.append(np.sqrt(
+            #     1/(self.wsize*250e-6) * np.trapezoid(y = window**2, x = 250e-6*np.arange(self.wsize))
+            #     ))
+        if padding:
+            values = [0] * (wsize-1) + values
+        else: pass
+        return np.array(values)
+    
+    def predict(self, time_series, activation_current, deactivation_coef = 0.95) -> np.ndarray:
+        
+        x_rms = self.rolling_rms(data=time_series, wsize=self.wsize, signal_period=20e-3, padding=True)
+
+        start = x_rms >= activation_current
+        back = x_rms > deactivation_coef * activation_current
+
+        goose = np.zeros_like(start, dtype=bool)
+
+        # Iteratively compute T using the cumulative logic
+        for i in range(1, len(start)):
+            goose[i] = (start[i] or goose[i-1]) and back[i]
+
+        self.start = start
+        self.back = back
+
+        return np.array(goose)
