@@ -58,7 +58,6 @@ Step 1: Initialize the Encoder
 Import ```TempRWE_Encoder``` from ```utils.py``` and initialize it:
 ```
 from utils import TempRWE_Encoder
-
 encoder = TempRWE_Encoder(maxcurrent=500, wavename="rbio1.3", maxlevel=6, verbosity=0)
 ```
 Step 2: Create a Dataset with Precomputed Embeddings
@@ -67,7 +66,6 @@ Import PrecomputedWaveletEmbeddingDataset and create a dataset object:
 
 ```
 from utils import PrecomputedWaveletEmbeddingDataset
-
 train_embs = PrecomputedWaveletEmbeddingDataset(
     data, labels, encoder, wsize=1024, stride=1, start_idx=80*20
 )
@@ -80,23 +78,20 @@ Use ```torch.utils.data.DataLoader``` to create a data loader:
 
 ```
 from torch.utils.data import DataLoader
-
 loader_train = DataLoader(train_embs, batch_size=32, shuffle=False)
 ```
 ### Model Inference
 
 The models are available in corresponding .ipynb files.
 
-Load a batch from the DataLoader.
+• Load a batch from the DataLoader.
 
-Pass it to the model and obtain logits.
+• Pass it to the model and obtain logits.
 
-Convert logits to probabilities using ```torch.sigmoid()```:
+• Convert logits to probabilities using ```torch.sigmoid()```:
 ```
 import torch
-
 logits = model(batch)
-
 probabilities = torch.sigmoid(logits)
 ```
 ### Baseline Model: RMS Hysteresis Estimator
@@ -107,16 +102,18 @@ To work with the baseline model, import ```RMSHisteresisEstimator``` from ```uti
 
 This model follows a model-based approach, relying on general protection logics to create a digital twin.
 
-The demonstration .ipynb file provides:
+The ```demonstration.ipynb``` file provides:
 
 • A guide on using RMSHisteresisEstimator
+
 • Performance metrics on the test dataset
 
 ### Binary Classification with XGBoost
 
 In the binary/ directory, you will find a .ipynb notebook where we trained an XGBoost Classifier using Temporal RWE Embeddings computed over the full sequence length.
 
-### Available Resources:
+### Available Resources (binary classification):
+
 Performance metrics for the best model (determined via GridSearch)
 
 results.joblib: A joblib dump of the GridSearchCV object
