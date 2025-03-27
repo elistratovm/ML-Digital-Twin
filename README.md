@@ -8,6 +8,10 @@ This project is dedicated to creating a digital twin for relay protection using 
 ### Project Structure
 The project consists of three main folders:
 
+1. Baseline
+
+The Baseline folder contains the basic model and the performance metrics used to evaluate and compare the developed models. 
+
 2. Binary
 
 The Binary folder includes all materials related to binary classifiers developed and applied within the project. It contains code, models, and other files related to binary classification methods for the relay protection task.
